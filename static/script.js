@@ -7,6 +7,7 @@ var WIDTH = 70;
 var HEIGHT = 35;
 var BUTTON_DISTANCE = 20;
 var LEVEL_DISTANCE = 240;
+var LEVEL_START = [0, 200, 400, 600, 720, 840 ];
 var LEVEL_DISTANCE_LOCAL_GRAPH = 70;
 var connection
 var buttonArray;
@@ -20,6 +21,8 @@ var ENABLE_COLOR = "#8CC63F";
 var DISABLE_COLOR = "#FF1D25";
 var COLOR_AT_LEVEL = ["#CFE7F9", "#BCDBF4", "#A0C9ED", "#61A4D7", "#00457C"];
 
+var imageNotTick;
+var imageTick;
 
 
 function button(id, level, x, y, width, height, shape) {
@@ -64,13 +67,37 @@ function roundRect(ctx, x, y, width, height, radius, fill, stroke) {
   }        
 }
 
-function drawRectangle(shape, x, y, w, h, message, color, borderColor, grd) {
+function drawImage(shape, x, y, w, h, image) {
 	var pos = new Object;
 	pos.x = x;
 	pos.y = y;
 	shape.origin = pos;
 	shape.width = w;
 	shape.height = h;
+	if (shape.image == null) 
+		shape.image = image;
+	context = shape.getContext();
+	var destX = x;
+    var destY = y;
+    var destWidth = w;
+    var destHeight = h;
+
+    context.drawImage(shape.image, destX, destY, destWidth, destHeight);
+    context.beginPath();
+    context.rect(x, y, w, h);
+}
+
+
+function drawRectangle(shape, x, y, w, h, message, color, borderColor, grd) {
+	var pos = new Object;
+	pos.x = x;
+	pos.y = y;
+	if (shape.origin == null)
+        shape.origin = pos;
+	if (shape.width == null)
+        shape.width = w;
+	if (shape.height == null)
+        shape.height = h;
 	if (shape.color == null)
 		shape.color = color;
 	if (shape.message == null)
@@ -84,7 +111,7 @@ function drawRectangle(shape, x, y, w, h, message, color, borderColor, grd) {
     if (shape.grd == null) 
 	    context.fillStyle = shape.color;
     else {
-	    var grd = context.createLinearGradient(x + w / 2, y, x + w / 2, y + h);
+	    var grd = context.createLinearGradient(shape.origin.x + shape.width / 2, shape.origin.y, shape.origin.x + shape.width / 2, shape.origin.y + shape.height);
     	grd.addColorStop(0, "#E6E6E6"); 
     	grd.addColorStop(1, shape.color); 
     	context.fillStyle = grd;
@@ -94,7 +121,7 @@ function drawRectangle(shape, x, y, w, h, message, color, borderColor, grd) {
     context.shadowOffsetY = 1;
     context.shadowBlur = 3;
     context.shadowColor = "black";
-    roundRect(context, x, y, w, h, HEIGHT / 5, true, false); 
+    roundRect(context, shape.origin.x, shape.origin.y, shape.width, shape.height, HEIGHT / 5, true, false); 
 
     context.restore(); 
     
@@ -210,9 +237,8 @@ function drawLevel(level, posX, posY, maxX, numModuleThisLev, name) {
 
 function moduleClicked() {
 	module = this;
-	stage.remove(tabLayer[0]);
 	code = this.getName();
-	drawModule(code);
+    moduleSelected(code);
 }
 
 function getMax(arrayA) {
@@ -240,12 +266,13 @@ function drawGraph() {
     for (var i = 0; i < 5; i++) {  
     	(function() {
     	var color = COLOR_AT_LEVEL[i];
-    	var posX = 20;
-        var posY = 20 + (4-i) * (HEIGHT + LEVEL_DISTANCE);
+        var posX = 20;
+        var posY = 20 + LEVEL_START[4-i];
+        var pos = 4-i;
         var name = new Array(numModule[i]);
         var levelBackGround = new Kinetic.Shape(
                   function() {
-        			drawRectangle(this, 0, posY - 20, SCREEN_WIDTH, LEVEL_DISTANCE + HEIGHT, "", color);                                    
+        			drawRectangle(this, 0, (LEVEL_START[pos]), SCREEN_WIDTH, (LEVEL_START[pos + 1] - LEVEL_START[pos]), "", color);                                    
                   }
 		 );
 		 tabLayer[0].add(levelBackGround);
@@ -256,8 +283,21 @@ function drawGraph() {
     stage.add(tabLayer[0]);
 }
 
-/*
+
 $(document).ready ( function() {
+    /*
+	var imageTickObj = new Image();
+    imageTickObj.onload = function(){
+    	imageTick = imageTickObj;
+    };
+    imageTickObj.src = "/static/images/checkbox_checked.png";
+    
+    var imageUnTickObj = new Image();
+    imageUnTickObj.onload = function(){
+    	imageNotTick = imageUnTickObj;
+    };
+    imageUnTickObj.src = "/static/images/checkbox_unchecked.png";
+    
     stage = new Kinetic.Stage("container", 1100, 2000);
     tabLayer = new Array();
     tabLayer[0] = new Kinetic.Layer("globalLayer");
@@ -265,6 +305,6 @@ $(document).ready ( function() {
     readGraph(jQuery.parseJSON(TESTDATA));
     drawGraph();
     stage.add(tabLayer[0]);
+    */
 });
 
-*/

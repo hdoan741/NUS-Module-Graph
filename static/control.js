@@ -76,6 +76,19 @@ $(document).ready(function() {
         $tabs.tabs( "select", 0 );
     });
 
+    var imageTickObj = new Image();
+    imageTickObj.onload = function(){
+    	imageTick = imageTickObj;
+    };
+    imageTickObj.src = "/static/images/checkbox-checked.png";
+    console.log(imageTick);
+    
+    var imageUnTickObj = new Image();
+    imageUnTickObj.onload = function(){
+    	imageNotTick = imageUnTickObj;
+    };
+    imageUnTickObj.src = "/static/images/checkbox-unchecked.png";
+ 
 
     stage = new Kinetic.Stage('container-1', 1085, 2000);
     tabLayer = new Array();
