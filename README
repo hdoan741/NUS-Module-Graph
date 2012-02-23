@@ -1,0 +1,22 @@
+Dependencies
+------------
+You need Flask, Scrapy, and MongoDB. If you have pip, run the following to install the first two (easy_install works as well):
+
+    pip install Flask
+    pip install scrapy
+    pip install pymongo
+
+    Install MongoDB by heading to the MongoDB website and following the instructions there.
+
+
+Running a scrape job
+--------------------
+1. Start MongoDB server (follow instructions from MongoDB website).
+2. cd into the soc_crawler directory. The scrapy project writes to MongoDB, so make sure mongod is running. Then (assuming you've installed scrapy) run:
+
+    scrapy crawl soc_modules
+
+Running the webserver:
+---------------------
+    python server.py
+
